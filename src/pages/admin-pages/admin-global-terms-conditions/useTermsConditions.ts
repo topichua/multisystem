@@ -71,8 +71,8 @@ export const useTermsConditions = () => {
       serverValueApi
         .createServerValue('DefaultTerms', editorContent)
         .then(() => {
-          notification.success({ message: 'Agreement saved successfully.' });
-          serverValue.value = editorContent;
+          notification.success({ message: "Agreement saved successfully." });
+          //  serverValue.value = editorContent;
           setContent(editorContent);
         })
         .catch((error) => {

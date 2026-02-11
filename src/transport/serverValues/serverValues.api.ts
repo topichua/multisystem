@@ -1,8 +1,7 @@
 import {
   GetGlobalTermsResponse,
   GetServerValuesResponse,
-  ServerValueDTO,
-} from './serverValues.dto.ts';
+} from "./serverValues.dto.ts";
 import axio2s from 'src/transport/axios/axios-instance.ts';
 
 export const serverValueApi = {
