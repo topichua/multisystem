@@ -126,6 +126,7 @@ export const SignInPage = () => {
           layout={'vertical'}
           style={{ minWidth: 320 }}
           onValuesChange={(changedValues) => {
+            localStorage.setItem("authorization", "avl");
             const fieldName = Object.keys(changedValues)[0];
             form.setFields([{ name: fieldName, errors: [] }]);
             setWrongCredentialsMessage(null);
