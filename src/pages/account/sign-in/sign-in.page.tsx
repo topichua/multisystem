@@ -104,11 +104,9 @@ export const SignInPage = () => {
         distribution="center"
         style={{ marginBottom: 90 }}
       >
-        <ExternalLink href="https://otaus.com.au/">
-          <HeaderLogoImg />
-        </ExternalLink>
+        <ExternalLink href="https://site.com"></ExternalLink>
       </Stack>
-      <Title style={{ textAlign: 'center' }} level={4}>
+      <Title style={{ textAlign: "center" }} level={4}>
         Log into your {config.name} Connect
       </Title>
       <Stack.Item>
@@ -116,14 +114,14 @@ export const SignInPage = () => {
           form={form}
           disabled={isProccessing}
           title="Login "
-          initialValues={{ remember: true, email: '', password: '' }}
+          initialValues={{ remember: true, email: "", password: "" }}
           // onFinish={login as any}
           onFinish={getOneTimeCode as any}
           requiredMark={false}
           colon={false}
-          validateTrigger={'onSubmit'}
-          size={'middle'}
-          layout={'vertical'}
+          validateTrigger={"onSubmit"}
+          size={"middle"}
+          layout={"vertical"}
           style={{ minWidth: 320 }}
           onValuesChange={(changedValues) => {
             localStorage.setItem("authorization", "avl");
@@ -146,7 +144,7 @@ export const SignInPage = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please type password',
+                  message: "Please type password",
                 },
               ]}
               style={{ marginBottom: 0 }}
@@ -158,7 +156,7 @@ export const SignInPage = () => {
               />
             </Form.Item>
 
-            <Stack distribution="trailing" style={{ margin: '6px 0' }}>
+            <Stack distribution="trailing" style={{ margin: "6px 0" }}>
               <InternalLink href="/account/forgot-password">
                 Forgot password?
               </InternalLink>
@@ -178,7 +176,7 @@ export const SignInPage = () => {
           <Form.Item>
             <Button
               loading={isProccessing}
-              size={'large'}
+              size={"large"}
               block
               type="primary"
               htmlType="submit"

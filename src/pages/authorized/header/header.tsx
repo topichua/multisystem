@@ -45,10 +45,6 @@ export const Header = () => {
       <S.HeaderPlaceholer />
       <S.Header>
         <S.HeaderWrapper>
-          <S.HeaderLogo
-            onClick={() => navigate('/')}
-            style={{ cursor: 'pointer', marginRight: 24 }}
-          />
           <Stack spacing="extraTight">
             <TabButton link={pagesMap.home} text="Home" exact />
             {/*<TabButton link={pagesMap.marketPlace} text="Marketplace" />*/}
@@ -100,10 +96,10 @@ export const Header = () => {
             gap={{ radius: currentStep == 4 ? 50 : 8, offset: 1 }}
             placement={
               currentStep == 0
-                ? 'center'
+                ? "center"
                 : currentStep == 4
-                  ? 'bottomLeft'
-                  : 'bottom'
+                  ? "bottomLeft"
+                  : "bottom"
             }
           />
         </S.HeaderWrapper>
