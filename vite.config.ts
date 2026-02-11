@@ -11,6 +11,7 @@ const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = normalizePath(path.join(pdfjsDistPath, 'cmaps'));
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/multisystem/' : '/',
   plugins: [
     react(),
     svgr(),

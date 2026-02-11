@@ -22,7 +22,7 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "prepare": "husky",
-    "deploy": "gh-pages -d dist --no-history",
+    "deploy": "node scripts/deploy-gh-pages.js",
     "postinstall": "node ./postinstall.js"
   },
   "dependencies": {
