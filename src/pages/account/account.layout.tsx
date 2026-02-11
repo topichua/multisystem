@@ -11,6 +11,7 @@ export const AccountLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    localStorage.set("authorization", "test");
     if (localStorage.getItem('authorization')) {
       navigate('/');
     }
