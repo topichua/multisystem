@@ -1,0 +1,13 @@
+.copy-meeting-notification {
+  padding: 10px !important;
+  max-width: max-content !important;
+}
+
+.copy-meeting-notification .ant-notification-notice-close {
+  top: 15px !important;
+}
+
+.copy-meeting-notification .ant-notification-notice-message {
+  padding-top: 2px !important;
+  margin-bottom: 4px !important;
+}

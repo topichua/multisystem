@@ -1,0 +1,1 @@
+export const NOTIFICATIONS_MAIN_COLOR_HOVER = '#221262';

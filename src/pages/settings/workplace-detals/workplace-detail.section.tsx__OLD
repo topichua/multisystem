@@ -1,0 +1,157 @@
+
+// import { LayersThree02 } from '@untitled-ui/icons-react';
+// import { FixedContentHeader } from 'src/components/common/Fixed-inner-header/fixed-content-header';
+// import { InnerPageHeader } from 'src/components/common/Inner-page-header/inner-page-header';
+// import { components } from 'src/styled/definitions/colors';
+// import { Page } from 'src/components/common/page/page';
+// import { useEffect, useState } from 'react';
+// import { settingsAPI } from 'src/transport/settings/setting.api';
+// import { Stack } from 'src/components/common/Stack/Stack';
+// import { WorkplaceDetailsDto } from './workplace-details.dto';
+// import { Form, Image, notification, Spin, Typography } from 'antd';
+// import { Title } from 'src/components/common/Typography/Title';
+// import { useBoolean } from 'ahooks';
+// import styled from 'styled-components';
+// import { Divider } from 'src/components/common/Divider/Divider';
+// import { Button } from 'src/components/common/Button/Button';
+
+// const FormStyled = styled(Form)`
+//   .ant-form-item-row {
+//     display: flex;
+//     align-items: center;
+//     max-width: 932px;
+//   }
+// `;
+
+// type WorkplaceData = {
+//   details: WorkplaceDetailsDto | null;
+//   updateLink: string;
+// };
+
+// const { Text } = Typography;
+
+// export const SettingsWorkplaceDetailsPage = () => {
+//   const [workplaceData, setWorkplaceData] = useState<WorkplaceData>({
+//     details: null,
+//     updateLink: '',
+//   });
+//   const [loading, { setTrue: startLoading, setFalse: finishLoading }] =
+//     useBoolean(false);
+
+//   const fetchData = async () => {
+//     startLoading();
+//     try {
+//       const [workplaceDetailsRes, updateDetailsLinkRes] = await Promise.all([
+//         settingsAPI.getWorkplaceDetails(),
+//         settingsAPI.getUpdateDetailsLink(),
+//       ]);
+//       setWorkplaceData({
+//         details: workplaceDetailsRes,
+//         updateLink: updateDetailsLinkRes.data,
+//       });
+//     } catch (error) {
+//       notification.error({
+//         message: 'Error fetching data',
+//       });
+//     } finally {
+//       finishLoading();
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
+
+//   return (
+//     <>
+//       <FixedContentHeader>
+//         <InnerPageHeader
+//           icon={<LayersThree02 color={components.colors.brandColor} />}
+//           title="Organisation details"
+//         >
+//           <Stack distribution="trailing">
+//             <Button
+//               type="primary"
+//               onClick={() => window.open(workplaceData.updateLink)}
+//             >
+//               Update details
+//             </Button>
+//           </Stack>
+//         </InnerPageHeader>
+//       </FixedContentHeader>
+//       <Page.Content
+//         style={{
+//           maxWidth: 1064,
+//           width: '100%',
+//           minHeight: 500,
+//           margin: '0 auto',
+//         }}
+//       >
+//         <Spin spinning={loading}>
+//           <FormStyled
+//             labelAlign={'left'}
+//             size={'middle'}
+//             labelCol={{ span: 6 }}
+//             layout={'horizontal'}
+//           >
+//             <Stack vertical spacing="extraLoose">
+//               <Title level={3}>My Organisation details</Title>
+//               <Stack vertical spacing="none">
+//                 <Form.Item label="Organisation name">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.name || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation address 1">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.address1 || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation address 2">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.address2 || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation suburb">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.suburb || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation state">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.state || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation postcode">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.postcode || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation country">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.country || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 <Form.Item label="Organisation website">
+//                   <Text strong>
+//                     {workplaceData?.details?.data.organisation.website || '-'}
+//                   </Text>
+//                 </Form.Item>
+//                 {workplaceData?.details?.data.organisation.imageUrl && (
+//                   <Form.Item label="Organisation image" name="imageUrl">
+//                     <Image
+//                       src={workplaceData?.details?.data.organisation.imageUrl}
+//                       alt="Organisation image"
+//                       width={200}
+//                     />
+//                   </Form.Item>
+//                 )}
+//               </Stack>
+//             </Stack>
+//             <Divider />
+//           </FormStyled>
+//         </Spin>
+//       </Page.Content>
+//     </>
+//   );
+// };
