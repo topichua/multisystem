@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Mail01, Passcode } from '@untitled-ui/icons-react';
-import { Alert, Form, notification, Typography } from 'antd';
+import { Alert, Form, Typography } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 
 import { Stack } from 'src/components/common/Stack/Stack';
