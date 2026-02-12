@@ -73,12 +73,6 @@ export const UserProfile = observer(({ isAdminSide }: UserProfileProps) => {
           style: itemStyle,
         },
         {
-          key: pagesMap.membershipProfilePage,
-          label: 'Membership profile',
-          icon: <Settings01 />,
-          style: itemStyle,
-        },
-        {
           key: pagesMap.organisationDetailsPage,
           label: 'Organisation details',
           icon: <LayersThree02 />,
@@ -92,6 +86,7 @@ export const UserProfile = observer(({ isAdminSide }: UserProfileProps) => {
         },
       ],
     },
+    /*
     {
       key: 'preferences_interests',
       label: 'Preferences & Interests',
@@ -109,12 +104,12 @@ export const UserProfile = observer(({ isAdminSide }: UserProfileProps) => {
           icon: <NotificationBox />,
           style: itemStyle,
         },
-        {
-          key: pagesMap.areaOfInterests,
-          label: 'Practice Areas of Interest',
-          icon: <FileQuestion01 />,
-          style: itemStyle,
-        },
+       // {
+        //  key: pagesMap.areaOfInterests,
+         // label: 'Practice Areas of Interest',
+         // icon: <FileQuestion01 />,
+        //  style: itemStyle,
+        //},
         {
           key: pagesMap.userInterests,
           label: 'My Areas of Interest',
@@ -123,26 +118,8 @@ export const UserProfile = observer(({ isAdminSide }: UserProfileProps) => {
         },
       ],
     },
-    {
-      key: 'activities_billing',
-      label: 'Activities & Billing',
-      icon: <CreditCard01 />,
-      children: [
-        {
-          key: pagesMap.invoicesTable,
-          label: 'Invoices',
-          icon: <Receipt />,
-          style: itemStyle,
-        },
-        {
-          key: pagesMap.cpdTrackerPage,
-          label: 'CPD',
-          icon: <Certificate02 />,
-          style: itemStyle,
-        },
-      ],
-    },
-    /* {
+    //
+     {
        key: 'help_support',
        label: 'Help & Support',
        icon: <HelpCircle />,

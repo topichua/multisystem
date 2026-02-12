@@ -42,56 +42,52 @@ export const SettingsPage = () => {
       key: pagesMap.accountDetailsPage,
       icon: <User03 />,
     },
-    {
-      label: 'Organisation details',
-      key: pagesMap.organisationDetailsPage,
-      icon: <LayersThree02 />,
-    },
-    {
-      label: 'Dietary & special requirements',
-      key: pagesMap.dietaryPage,
-      icon: <PieChart01 />,
-    },
-    {
-      label: 'Membership profile',
-      key: pagesMap.membershipProfilePage,
-      icon: <Settings01 />,
-    },
+   // {
+   //    label: 'Organisation details',
+   //    key: pagesMap.organisationDetailsPage,
+   //    icon: <LayersThree02 />,
+   // },
+   // {
+   //    label: 'Dietary & special requirements',
+   //    key: pagesMap.dietaryPage,
+   //    icon: <PieChart01 />,
+   // },
     {
       label: 'Change password',
       key: pagesMap.changePasswordPage,
       icon: <PasscodeLock />,
     },
-    {
-      key: pagesMap.communicationPreferences,
-      label: 'All communication preferences',
-      icon: <Bell04 />,
-    },
-    {
-      key: pagesMap.userCommunicationPreferences,
-      label: 'My communication preferences',
-      icon: <NotificationBox />,
-    },
-    {
-      key: pagesMap.areaOfInterests,
-      label: 'Practice Areas of Interest',
-      icon: <FileQuestion01 />,
-    },
-    {
-      key: pagesMap.userInterests,
-      label: 'My Areas of Interest',
-      icon: <UserCheck01 />,
-    },
+   // {
+   //   key: pagesMap.communicationPreferences,
+   //   label: 'All communication preferences',
+   //   icon: <Bell04 />,
+   // },
+  //  {
+   //   key: pagesMap.userCommunicationPreferences,
+   //   label: 'My communication preferences',
+  //    icon: <NotificationBox />,
+   // },
+  //  {
+   //     key: pagesMap.areaOfInterests,
+   //     label: 'Practice Areas of Interest',
+   //     icon: <FileQuestion01 />,
+   // },
+   // {
+   //   key: pagesMap.userInterests,
+   //   label: 'My Areas of Interest',
+   //   icon: <UserCheck01 />,
+   // },
     {
       label: 'Contact us',
       key: pagesMap.contactUs,
       icon: <MessageTextSquare02 />,
     },
-    {
-      label: 'Invoices',
-      key: pagesMap.invoicesTable,
-      icon: <Receipt />,
-    },
+
+    //{
+      //label: 'Invoices',
+     // key: pagesMap.invoicesTable,
+     // icon: <Receipt />,
+   // },
     // {
     //   label: 'Privacy',
     //   key: pagesMap.privacy,

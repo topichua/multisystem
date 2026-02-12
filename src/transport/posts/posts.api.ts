@@ -53,24 +53,39 @@ export const postApi = {
       const now = Date.now();
       const isSaved = i % 3 === 0;
       const isLiked = i % 5 === 0;
+      const titles = [
+        'Q4 security review summary',
+        'Incident response playbook update',
+        'Access control policy change',
+        'Phishing awareness reminder',
+        'VPN and MFA rollout timeline',
+      ];
+      const bodies = [
+        'Please review the attached summary and share feedback in the comments. Relevant teams have been notified.',
+        'Updated procedures are now in the shared drive. All members must acknowledge by the end of the week.',
+        'This change takes effect from next Monday. Contact the security team if you have questions.',
+        'Reminder: do not click links or open attachments from unknown senders. Report suspicious emails via the usual channel.',
+        'Rollout will be phased by department. You will receive an email with your scheduled window.',
+      ];
+      const tagLabels = ['Incident', 'Policy', 'Update'];
       const post: Post = {
         id,
         communityId: `community-${(i % 5) + 1}`,
-        title: `Mock Post Title ${i}`,
-        body: `This is a mocked post body for item ${i}. It exists to help exercise pagination and "load more" behavior in the feed.`,
+        title: titles[(i - 1) % titles.length],
+        body: bodies[(i - 1) % bodies.length],
         createdAt: new Date(now - i * 3600_000),
         updatedAt: new Date(now - (i - 1) * 1800_000),
         status: PostStatus.Published,
         createdByUserId: `user-${(i % 7) + 1}`,
         isFrozen: false,
         imageUrl:
-          i % 4 === 0 ? `https://picsum.photos/seed/mock-${i}/600/400` : undefined,
+          i % 4 === 0 ? `https://picsum.photos/seed/post-${i}/600/400` : undefined,
         likesCount: i * 2,
         viewsCount: i * 10,
         commentsCount: i % 6,
         isLiked,
         isSaved,
-        tags: [{ id: `tag-${(i % 3) + 1}`, name: `Tag ${(i % 3) + 1}` }],
+        tags: [{ id: `tag-${(i % 3) + 1}`, name: tagLabels[i % 3] }],
       };
       return Promise.resolve({ post });
     }
@@ -82,15 +97,27 @@ export const postApi = {
     page: number = 1,
     pageSize = 1000
   ): Promise<PaginationResponse<{ postComments: Comment[] }>> {
-    // Mock comments deterministically based on postId and align user ids with existing mocks
-    // Derive community from mocked posts feed mapping: community-{(i % 5) + 1}
     const match = id.match(/mock-post-(\d+)/);
     const idx = match ? Number(match[1]) : 1;
-    const communityId = `community-${((idx - 1) % 20) + 1}`;
     const now = Date.now();
 
-    // Create a set of root comments and replies
-    const totalRoot = (idx % 4) + 3; // 3..6 roots
+    const rootBodies = [
+      'Thanks for sharing. I’ve forwarded this to the ops team.',
+      'We’ve seen similar patterns in our region. I can share our runbook if useful.',
+      'Acknowledged. Please add this to the next all-hands.',
+      'Confirmed on our side. No impact to production.',
+      'Good catch. I’ll update the doc and notify the channel.',
+      'Noted. Compliance have been looped in.',
+    ];
+    const replyBodies = [
+      'Agreed.',
+      'Will do.',
+      'I’ll follow up offline.',
+      'Same on our end.',
+      'Thanks for the update.',
+    ];
+
+    const totalRoot = (idx % 4) + 3;
     const comments: Comment[] = [];
 
     for (let r = 1; r <= totalRoot; r++) {
@@ -98,7 +125,7 @@ export const postApi = {
       const creatorNum = ((idx + r) % 7) + 1;
       comments.push({
         id: rootId,
-        body: `This is a mocked root comment ${r} for ${id} in ${communityId}.`,
+        body: rootBodies[(idx + r - 1) % rootBodies.length],
         parentCommentId: null,
         createdByUserId: `user-${creatorNum}`,
         createdAt: new Date(now - (idx + r) * 3600_000),
@@ -112,21 +139,20 @@ export const postApi = {
             ? [
                 {
                   path: `https://picsum.photos/seed/${rootId}/200/150`,
-                  name: `mock-attachment-${rootId}.jpg`,
+                  name: `attachment-${rootId}.jpg`,
                   type: 'image/jpeg',
                 },
               ]
             : undefined,
       });
 
-      // Replies per root
-      const replies = (idx + r) % 3; // 0..2 replies
+      const replies = (idx + r) % 3;
       for (let a = 1; a <= replies; a++) {
         const replyId = `c-${id}-r${r}-a${a}`;
         const replyCreatorNum = ((idx + r + a) % 7) + 1;
         comments.push({
           id: replyId,
-          body: `Reply ${a} to root ${r} for ${id}.`,
+          body: replyBodies[(idx + r + a - 1) % replyBodies.length],
           parentCommentId: rootId,
           createdByUserId: `user-${replyCreatorNum}`,
           createdAt: new Date(now - (idx + r + a) * 3300_000),
@@ -297,8 +323,30 @@ export const postApi = {
     pageSize = 20,
     includeOnlySaved = false,
   }: FetchPostsFeedDto): Promise<PaginationResponse<{ posts: Post[] }>> {
-    const totalMockCount = 400; // provide more posts across all 20 communities
-    const now = 1735689600000; // fixed base for stable timestamps (2025-01-01)
+    const totalMockCount = 400;
+    const now = 1735689600000; // 2025-01-01 base for stable timestamps
+
+    const titles = [
+      'Q4 security review summary',
+      'Incident response playbook update',
+      'Access control policy change',
+      'Phishing awareness reminder',
+      'VPN and MFA rollout timeline',
+      'Weekly threat intel digest',
+      'Password policy update',
+      'Data classification guidelines',
+    ];
+    const bodies = [
+      'Please review the attached summary and share feedback in the comments. Relevant teams have been notified.',
+      'Updated procedures are now in the shared drive. All members must acknowledge by the end of the week.',
+      'This change takes effect from next Monday. Contact the security team if you have questions.',
+      'Reminder: do not click links or open attachments from unknown senders. Report suspicious emails via the usual channel.',
+      'Rollout will be phased by department. You will receive an email with your scheduled window.',
+      'Summary of notable IOCs and recommended actions. Full report is in the portal.',
+      'New requirements apply to all accounts. Existing passwords will need to be rotated by the deadline.',
+      'Please ensure all handling follows the updated classification levels.',
+    ];
+    const tagLabels = ['Incident', 'Policy', 'Update'];
 
     const allPosts: Post[] = Array.from({ length: totalMockCount }, (_, idx) => {
       const i = idx + 1;
@@ -308,20 +356,20 @@ export const postApi = {
       return {
         id: `mock-post-${i}`,
         communityId: `community-${((i - 1) % 20) + 1}`,
-        title: `Mock Post Title ${i}`,
-        body: `This is a mocked post body for item ${i}. It exists to help exercise pagination and "load more" behavior in the feed.`,
+        title: titles[(i - 1) % titles.length],
+        body: bodies[(i - 1) % bodies.length],
         createdAt: new Date(now - i * 3600_000),
         updatedAt: new Date(now - (i - 1) * 1800_000),
         status: PostStatus.Published,
         createdByUserId: `user-${(i % 7) + 1}`,
         isFrozen: false,
-        imageUrl: i % 4 === 0 ? `https://picsum.photos/seed/mock-${i}/600/400` : undefined,
+        imageUrl: i % 4 === 0 ? `https://picsum.photos/seed/post-${i}/600/400` : undefined,
         likesCount: i * 2,
         viewsCount: i * 10,
         commentsCount: i % 6,
         isLiked,
         isSaved,
-        tags: [{ id: `tag-${(i % 3) + 1}`, name: `Tag ${(i % 3) + 1}` }],
+        tags: [{ id: `tag-${(i % 3) + 1}`, name: tagLabels[i % 3] }],
       };
     });
 

@@ -52,20 +52,40 @@ export const accountAPI = {
     // Mocked current user aligned with other mocks (e.g., user-1)
     const user: UserProfileDto = {
       id: 'user-1',
-      firstName: 'First1',
-      lastName: 'Last1',
-      email: 'user1@example.com',
+      firstName: 'Alex',
+      lastName: 'Morgan',
+      email: 'alex.morgan@example.com',
       role: UserRole.Admin,
       avatarUrl: 'https://i.pravatar.cc/150?img=1',
       title: 'Administrator',
-      pronoun: 'they/them',
+      pronoun: 'he/him',
       postCounter: 42,
     };
     return Promise.resolve({ data: user });
   },
 
   async getBondMxCurrent(): Promise<{ data: UserProfileDto }> {
-    return await axio2s.get(`/api/User`);
+    // Mock: replace with real API when backend is ready
+    const user: UserProfileDto = {
+      id: 'bond-user-1',
+      firstName: 'Demo',
+      lastName: 'Demo',
+      email: 'alex.morgan@example.com',
+      role: UserRole.Admin,
+      avatarUrl: 'https://i.pravatar.cc/150?img=5',
+      title: 'Dr',
+      pronoun: 'they/them',
+      prefName: 'Alex',
+      mobile: '+61 400 000 000',
+      postalAddress1: '123 Example St',
+      postalSuburb: 'Sydney',
+      postalState: 'NSW',
+      postalPostcode: '2000',
+      postalCountry: 'Australia',
+      postCounter: 12,
+    };
+    return Promise.resolve({ data: user });
+    // return await axio2s.get(`/api/User`);
   },
 
   async saveBondMxCurrentProfile(values: any) {

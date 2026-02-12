@@ -41,21 +41,6 @@ export const HeaderMobile = () => {
         label: 'Communities',
         linkTo: pagesMap.communities,
       },
-      {
-        key: 4,
-        label: 'CPD & Events',
-        linkTo: pagesMap.events,
-      },
-      {
-        key: 5,
-        label: 'News',
-        linkTo: `${pagesMap.news}/${ALL_CATEGORIES_PARAM}`,
-      },
-      {
-        key: 6,
-        label: 'Resources',
-        linkTo: `${pagesMap.resources}/${ALL_CATEGORIES_PARAM}`,
-      }
       // {
       //   key: 7,
       //   label: 'Member content',

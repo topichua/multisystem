@@ -6,13 +6,14 @@ import UpcomingEvents from './Events/upcoming-events.tsx';
 import * as S from './side-block.styled.ts';
 
 const SideBlock = () => {
+  const hidecpd = true;
   return (
     <S.SideBlockStyled vertical>
       <UserInfo />
       <Divider spacing="none" />
-      <CpdProgress />
+     {!hidecpd  &&<CpdProgress />}
       <Divider spacing="none" />
-      <UpcomingEvents />
+     {!hidecpd  &&<UpcomingEvents />}
       <Divider spacing="none" />
       {/*<Communities />*/}
       <MyFavourites />

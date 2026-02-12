@@ -52,15 +52,32 @@ import { UploadFile } from 'antd';
 
 // Shared mock helpers to keep communities data consistent across methods
 const MOCK_COMMUNITIES_TOTAL = 20; // ensure >=15
-const MOCK_TIME_BASE = 1735689600000; // Fixed timestamp for stable mock dates (2025-01-01)
+const MOCK_TIME_BASE = 1735689600000; // 2025-01-01 base for stable timestamps
+
+const CATEGORY_NAMES = [
+  'Incident response',
+  'Policy & compliance',
+  'Threat intelligence',
+  'Access control',
+  'Security awareness',
+  'Operations',
+];
+const CATEGORY_DESCRIPTIONS = [
+  'Communities for incident handling and post-mortems.',
+  'Policy updates, compliance and audit discussions.',
+  'Threat intel sharing and IOC discussion.',
+  'Access reviews, IAM and provisioning.',
+  'Training, phishing awareness and best practices.',
+  'Day-to-day security operations and runbooks.',
+];
 
 const buildMockCategoryPool = (now: number) =>
   Array.from({ length: 6 }, (_, i) => ({
     id: `cat-${i + 1}`,
-    name: `Category ${i + 1}`,
+    name: CATEGORY_NAMES[i],
     createdAt: new Date(now - (i + 1) * 86400_000),
     createdByUserId: `user-${(i % 3) + 1}`,
-    description: `Description for Category ${i + 1}`,
+    description: CATEGORY_DESCRIPTIONS[i],
     color: ['#5B8FF9', '#61DDAA', '#65789B', '#F6BD16', '#7262fd', '#78D3F8'][i % 6],
     parentCategoryId: null,
     communityCount: (i + 1) * 3,
@@ -69,6 +86,51 @@ const buildMockCategoryPool = (now: number) =>
     updatedAt: new Date(now - i * 43200_000),
     updatedByUserId: `user-${(i % 5) + 1}`,
   }));
+
+const COMMUNITY_NAMES = [
+  'Security Operations',
+  'Incident Response',
+  'Policy & Compliance',
+  'Threat Intelligence',
+  'Access Control',
+  'Security Awareness',
+  'Red Team',
+  'Blue Team',
+  'Governance & Risk',
+  'Privacy & DPO',
+  'Cloud Security',
+  'Endpoint & Identity',
+  'Vulnerability Management',
+  'Security Engineering',
+  'Crisis Management',
+  'Third-Party Risk',
+  'Forensics & IR',
+  'AppSec',
+  'Network Security',
+  'Security Training',
+];
+const COMMUNITY_SHORT_DESCRIPTIONS = [
+  'Day-to-day security operations, monitoring and escalation.',
+  'Incident handling, post-mortems and runbook updates.',
+  'Policy drafts, compliance and control discussions.',
+  'Threat intel sharing, IOCs and TTPs.',
+  'IAM, access reviews and provisioning workflows.',
+  'Training, phishing simulations and awareness campaigns.',
+  'Offensive security exercises and purple team.',
+  'Defensive operations and detection tuning.',
+  'Risk assessments and governance frameworks.',
+  'Privacy reviews and DPO coordination.',
+  'Cloud security controls and CSPM.',
+  'Identity, endpoint and device security.',
+  'Vulnerability scanning, patching and prioritisation.',
+  'Security tooling and automation.',
+  'Crisis comms and major incident coordination.',
+  'Vendor and supplier security assessments.',
+  'Digital forensics and incident response.',
+  'Application security and secure SDLC.',
+  'Network segmentation and monitoring.',
+  'Security training and certification.',
+];
 
 const buildMockCommunities = () => {
   const now = MOCK_TIME_BASE;
@@ -119,10 +181,10 @@ const buildMockCommunities = () => {
       likesCount,
       membersCount,
       pendingMembersCount,
-      name: `Mock Community ${i}`,
+      name: COMMUNITY_NAMES[(i - 1) % COMMUNITY_NAMES.length],
       postsCount,
       segmentIds: i % 3 === 0 ? [`seg-${(i % 4) + 1}`] : null,
-      shortDescription: `This is a mocked short description for community ${i}.`,
+      shortDescription: COMMUNITY_SHORT_DESCRIPTIONS[(i - 1) % COMMUNITY_SHORT_DESCRIPTIONS.length],
       tagsId: i % 2 === 0 ? [`tag-${(i % 3) + 1}`] : null,
       updatedAt: new Date(now - (i - 1) * 3600_000),
       latestActivity: new Date(now - i * 1800_000),
@@ -169,8 +231,30 @@ const buildMockCommunities = () => {
   });
 };
 
+const POST_TITLES = [
+  'Q4 security review summary',
+  'Incident response playbook update',
+  'Access control policy change',
+  'Phishing awareness reminder',
+  'VPN and MFA rollout timeline',
+  'Weekly threat intel digest',
+  'Password policy update',
+  'Data classification guidelines',
+];
+const POST_BODIES = [
+  'Please review the attached summary and share feedback in the comments. Relevant teams have been notified.',
+  'Updated procedures are now in the shared drive. All members must acknowledge by the end of the week.',
+  'This change takes effect from next Monday. Contact the security team if you have questions.',
+  'Reminder: do not click links or open attachments from unknown senders. Report suspicious emails via the usual channel.',
+  'Rollout will be phased by department. You will receive an email with your scheduled window.',
+  'Summary of notable IOCs and recommended actions. Full report is in the portal.',
+  'New requirements apply to all accounts. Existing passwords will need to be rotated by the deadline.',
+  'Please ensure all handling follows the updated classification levels.',
+];
+const POST_TAG_LABELS = ['Incident', 'Policy', 'Update'];
+
 const buildMockPosts = () => {
-  const totalMockCount = 400; // more posts so every community has plenty
+  const totalMockCount = 400;
   const now = MOCK_TIME_BASE;
 
   const allPosts: Post[] = Array.from({ length: totalMockCount }, (_, idx) => {
@@ -181,8 +265,8 @@ const buildMockPosts = () => {
     return {
       id: `mock-post-${i}`,
       communityId: `community-${((i - 1) % MOCK_COMMUNITIES_TOTAL) + 1}`,
-      title: `Mock Post Title ${i}`,
-      body: `This is a mocked post body for item ${i}. It exists to help exercise pagination and "load more" behavior in the feed.`,
+      title: POST_TITLES[(i - 1) % POST_TITLES.length],
+      body: POST_BODIES[(i - 1) % POST_BODIES.length],
       createdAt: new Date(now - i * 3600_000),
       updatedAt: new Date(now - (i - 1) * 1800_000),
       status: PostStatus.Published,
@@ -190,19 +274,44 @@ const buildMockPosts = () => {
       isFrozen: false,
       imageUrl:
         i % 4 === 0
-          ? `https://picsum.photos/seed/mock-${i}/600/400`
+          ? `https://picsum.photos/seed/post-${i}/600/400`
           : undefined,
       likesCount: i * 2,
       viewsCount: i * 10,
       commentsCount: i % 6,
       isLiked,
       isSaved,
-      tags: [{ id: `tag-${(i % 3) + 1}`, name: `Tag ${(i % 3) + 1}` }],
+      tags: [{ id: `tag-${(i % 3) + 1}`, name: POST_TAG_LABELS[i % 3] }],
     };
   });
 
   return allPosts;
 };
+
+const MEETING_NAMES = [
+  'Incident review',
+  'Policy sync',
+  'Threat briefing',
+  'Access review',
+  'Security stand-up',
+  'Runbook walkthrough',
+  'Post-mortem',
+  'Compliance check-in',
+  'Red team debrief',
+  'Vulnerability triage',
+];
+const MEETING_DESCRIPTIONS = [
+  'Weekly incident review and follow-up actions.',
+  'Policy and control alignment across teams.',
+  'Threat intel briefing and IOC discussion.',
+  'Quarterly access review and certification.',
+  'Daily security operations stand-up.',
+  'Runbook review and tabletop exercise.',
+  'Post-incident review and lessons learned.',
+  'Compliance status and audit prep.',
+  'Red team exercise debrief and findings.',
+  'Vulnerability prioritisation and remediation.',
+];
 
 const buildMockMeetings = () => {
   const totalMockCount = 30;
@@ -212,17 +321,16 @@ const buildMockMeetings = () => {
     { length: totalMockCount },
     (_, idx) => {
       const i = idx + 1;
-      const communityId = `community-${(i % 5) + 1}`;
       const startDate = new Date(now + i * 86400_000);
       const rsvpDate =
         i % 2 === 0 ? new Date(startDate.getTime() - 2 * 86400_000) : null;
       const isFavorite = i % 4 === 0;
-      const status = i % 3; // 0,1,2 aligning with MeetingStatus enum numeric values
+      const status = i % 3;
 
       const meet: CommunityMeeting = {
         id: `mock-meet-${i}`,
-        name: `Mock Meeting ${i}`,
-        description: `This is a mocked meeting ${i} for ${communityId}.`,
+        name: MEETING_NAMES[(i - 1) % MEETING_NAMES.length],
+        description: MEETING_DESCRIPTIONS[(i - 1) % MEETING_DESCRIPTIONS.length],
         meetingId: `m-${1000 + i}`,
         meetingLink: `https://example.com/meet/${i}`,
         meetingPassword: i % 2 === 0 ? `pass-${i}` : null,
@@ -268,9 +376,9 @@ const buildMockExploreMeetings = () => {
 
       const meet = {
         id: `explore-meet-${i}`,
-        name: `Explore Meeting ${i}`,
+        name: MEETING_NAMES[(i - 1) % MEETING_NAMES.length],
         communityId,
-        description: `This is a mocked explore meeting ${i} for ${communityId}.`,
+        description: MEETING_DESCRIPTIONS[(i - 1) % MEETING_DESCRIPTIONS.length],
         meetingLink: `https://example.com/explore/meet/${i}`,
         meetingId: `em-${10000 + i}`,
         meetingPassword: i % 4 === 0 ? `exp-${i}` : '',
@@ -298,6 +406,23 @@ const buildMockExploreMeetings = () => {
   return meets;
 };
 
+const MEMBER_FIRST_NAMES = [
+  'Alex', 'Jordan', 'Sam', 'Casey', 'Morgan', 'Riley', 'Taylor', 'Quinn',
+  'Jamie', 'Reese', 'Avery', 'Cameron', 'Drew', 'Finley', 'Hayden', 'Kai',
+  'Blake', 'Dakota', 'Emery', 'Parker', 'Skyler', 'Sydney', 'River', 'Sage',
+  'Ellis', 'Rowan', 'Phoenix', 'Arden', 'Devon', 'Logan', 'Reed', 'Shane',
+  'Brooke', 'Claire', 'Emma', 'Grace', 'Mia', 'Olivia', 'Zoe', 'Liam',
+  'Noah', 'James', 'Oliver', 'Ethan', 'Lucas', 'Mason', 'Harper', 'Ella',
+];
+const MEMBER_LAST_NAMES = [
+  'Chen', 'Kim', 'Patel', 'Singh', 'Nguyen', 'Wilson', 'Thompson', 'Martinez',
+  'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Clark',
+  'Lewis', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Scott',
+  'Green', 'Baker', 'Adams', 'Nelson', 'Hill', 'Campbell', 'Mitchell', 'Roberts',
+  'Turner', 'Phillips', 'Evans', 'Parker', 'Edwards', 'Collins', 'Stewart', 'Morris',
+  'Rogers', 'Reed', 'Cook', 'Morgan', 'Bell', 'Murphy', 'Bailey', 'Cooper',
+];
+
 const buildMockCommunityMembers = (communityId: string) => {
   const now = MOCK_TIME_BASE;
   const totalMembers = 48;
@@ -309,7 +434,7 @@ const buildMockCommunityMembers = (communityId: string) => {
   const states = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
   const titles = ['Member', 'Contributor', 'Editor', 'Moderator'];
   const pronouns = ['she/her', 'he/him', 'they/them'];
-  const orgs = ['Acme Health', 'Bond Labs', 'MX Pharma', 'Wellness Co'];
+  const orgs = ['Acme Health', 'Labs', 'MX Pharma', 'Wellness Co'];
 
   const members: CommunityMember[] = Array.from(
     { length: totalMembers },
@@ -317,7 +442,6 @@ const buildMockCommunityMembers = (communityId: string) => {
       const i = idx + 1;
       const userNum = ((idx + 1) % 70) + 1;
       const role = roles[i % roles.length];
-      // Heavier weight on Joined, occasional Awaiting/Blocked/Removed
       const status =
         i % 11 === 0
           ? CommunityStatus.Blocked
@@ -333,8 +457,8 @@ const buildMockCommunityMembers = (communityId: string) => {
       return {
         id: `member-${communityId}-${i}`,
         userId: `user-${userNum}`,
-        firstName: `First${userNum}`,
-        lastName: `Last${userNum}`,
+        firstName: MEMBER_FIRST_NAMES[idx % MEMBER_FIRST_NAMES.length],
+        lastName: MEMBER_LAST_NAMES[idx % MEMBER_LAST_NAMES.length],
         email: `user${userNum}@example.com`,
         title: titles[i % titles.length],
         role,
@@ -349,7 +473,7 @@ const buildMockCommunityMembers = (communityId: string) => {
         location: `Location ${((i - 1) % 10) + 1}`,
         jobTitle: i % 3 === 0 ? 'Pharmacist' : i % 3 === 1 ? 'Researcher' : 'Manager',
         homeState: states[i % states.length],
-        reason: i % 5 === 0 ? 'Interested in community updates' : '',
+        reason: i % 5 === 0 ? 'Security team member' : '',
         isHaveAnswers: i % 4 === 0 ? true : null,
       };
     }
@@ -480,7 +604,23 @@ export const communityApi = {
   },
 
   getMeetingPreference(): Promise<MeetingPreference> {
-    return axio2s.get('api/v1/community/meeting/preference');
+    // Mock: aligned with buildMockCommunities (first 8 communities)
+    const communities = Array.from({ length: 8 }, (_, idx) => {
+      const i = idx + 1;
+      return {
+        id: `community-${i}`,
+        name: COMMUNITY_NAMES[(i - 1) % COMMUNITY_NAMES.length],
+        shortDescription: COMMUNITY_SHORT_DESCRIPTIONS[(i - 1) % COMMUNITY_SHORT_DESCRIPTIONS.length],
+        imageUrl:
+          i % 4 === 0 ? `https://picsum.photos/seed/community-${i}/400/300` : undefined,
+      };
+    });
+    return Promise.resolve({
+      communities,
+      totalIncoming: 5,
+      totalUpcoming: 12,
+    });
+    // return axio2s.get('api/v1/community/meeting/preference');
   },
 
   async getCommunityById(id: string): Promise<GetCommunityByIdResponse> {
@@ -500,7 +640,7 @@ export const communityApi = {
           ...base[(idx - 1) % base.length].community,
           id,
           alias: id,
-          name: `Mock Community ${idx}`,
+          name: COMMUNITY_NAMES[(idx - 1) % COMMUNITY_NAMES.length],
         },
       };
     }
@@ -704,7 +844,7 @@ export const communityApi = {
   ): Promise<
     PaginationResponse<{ communityCategories: Array<CommunitiyCategoryDto> }>
   > {
-    // Build categories from mocked communities and aggregate communityCount
+    // Build categories from seed data and aggregate communityCount
     const now = MOCK_TIME_BASE;
     const baseCategories = buildMockCategoryPool(now);
     const communities = buildMockCommunities();
@@ -876,18 +1016,19 @@ export const communityApi = {
         meet: {
           ...base[(i - 1) % base.length].meet,
           id: meetingId,
-          name: `Mock Meeting ${i}`,
+          name: MEETING_NAMES[(i - 1) % MEETING_NAMES.length],
         },
       };
     }
 
-    // Ensure community consistency; if mismatch, adjust description to reflect desired community
     if (communityId) {
       found = {
         ...found,
         meet: {
           ...found.meet,
-          description: `This is a mocked meeting derived for ${communityId}.`,
+          description: MEETING_DESCRIPTIONS[
+            (Number(meetingId.replace('mock-meet-', '')) || 1) % MEETING_DESCRIPTIONS.length
+          ],
         },
       };
     }

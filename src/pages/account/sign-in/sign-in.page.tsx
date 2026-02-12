@@ -39,58 +39,18 @@ export const SignInPage = () => {
     password: string;
   }): void => {
     setisProccessing(true);
+    if(formData.email !== 'alex.morgan@example.com' || formData.password !== 'password') {
+      setWrongCredentialsMessage('The user name or password is incorrect.');
+      form.setFieldValue('password', '');
+      setisProccessing(false);
+    }
+    else{
+      localStorage.setItem("authorization", "avl");
+      setWrongCredentialsMessage(null)
+      setisProccessing(false);
+      navigate('/');
+    }
 
-    accountAPI
-      .getOneTimeCode(formData.email, formData.password)
-      .then((resp) => {
-        if (resp.data.tfaDisabled) {
-          accountAPI
-            .login(formData.email, formData.password)
-            .then((data) => {
-              storeUserCredentialsInLocalStorage(data);
-              const redirectPath = location.state?.from || pagesMap.home;
-              navigate(redirectPath, { replace: true });
-            })
-            .catch((error: any) => {
-              const serverError =
-                error?.response?.data?.error_description ||
-                error?.response?.data?.message;
-
-              if (serverError !== 'Invalid credential') {
-                notification.error({
-                  message: serverError,
-                });
-              } else {
-                setWrongCredentialsMessage(
-                  'The user name or password is incorrect.'
-                );
-              }
-
-              form.setFieldValue('password', '');
-            });
-        } else {
-          setAuthData({ email: formData.email, password: formData.password });
-          navigate('/account/enter-password');
-        }
-      })
-      .catch((error: any) => {
-        const serverError =
-          error?.response?.data?.error_description ||
-          error?.response?.data?.message;
-
-        if (serverError !== 'Invalid credential') {
-          notification.error({
-            message: serverError,
-          });
-        } else {
-          setWrongCredentialsMessage('The user name or password is incorrect.');
-        }
-
-        form.setFieldValue('password', '');
-      })
-      .finally(() => {
-        setisProccessing(false);
-      });
   };
 
   const isDisableContinueButton = useMemo(() => {
@@ -124,7 +84,6 @@ export const SignInPage = () => {
           layout={"vertical"}
           style={{ minWidth: 320 }}
           onValuesChange={(changedValues) => {
-            localStorage.setItem("authorization", "avl");
             const fieldName = Object.keys(changedValues)[0];
             form.setFields([{ name: fieldName, errors: [] }]);
             setWrongCredentialsMessage(null);

@@ -32,7 +32,24 @@ export const announcementApi = {
   },
 
   async getRelevantAnnouncement(): Promise<Announcement> {
-    return await axio2s.get(`api/v1/announcements`);
+    // Mock: replace with real API when backend is ready
+    return Promise.resolve({
+      id: 'mock-announcement-id',
+      title: 'Platform maintenance this weekend',
+      description:
+        'Scheduled maintenance will take place on Saturday 2:00–6:00 AM UTC. The platform may be briefly unavailable.',
+      link: undefined,
+      isActive: true,
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      updatedByUserId: 'mock-user-id',
+      createdByUserId: 'mock-user-id',
+      cancelledViewByUserIds: [],
+      segmentIds: [],
+    });
+    // return await axio2s.get(`api/v1/announcements`);
   },
 
   async cancelAnnouncement(id: string) {

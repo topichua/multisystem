@@ -34,18 +34,16 @@ const UserInfo = () => {
         </Stack>
         <S.StyledTextIcon>
           <Phone />
-          <Text>{user?.mobile}</Text>
+          <Text>+61 412 345 678</Text>
         </S.StyledTextIcon>
         <S.StyledTextIcon>
           <Mail02 />
-          <Text>{user?.registeredEmail}</Text>
+          <Text>alex.morgan@example.com</Text>
         </S.StyledTextIcon>
         <S.StyledTextIcon>
           <MarkerPin01 />
           <Text>
-            {user?.postalAddress1 || '-'}, {user?.postalSuburb || '-'},{' '}
-            {user?.postalPostcode || '-'}, {user?.postalState || '-'},{' '}
-            {user?.postalCountry || '-'}
+          Melbourne, VIC
           </Text>
         </S.StyledTextIcon>
       </S.StyledUserInfo>

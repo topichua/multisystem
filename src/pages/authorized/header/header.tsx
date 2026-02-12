@@ -51,9 +51,7 @@ export const Header = () => {
             <div ref={refCommunity}>
               <TabButton link={pagesMap.communities} text="Communities" />
             </div>
-            <div ref={refEvents}>
-              <TabButton link={pagesMap.events} text="CPD & Events" />
-            </div>
+            {/*
             <div ref={refNewsResources}>
               <Stack spacing="extraTight">
                 <TabButton
