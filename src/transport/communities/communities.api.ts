@@ -487,9 +487,18 @@ export const communityApi = {
     page: number = 1,
     pageSize = 1000
   ): Promise<PaginationResponse<{ communities: Array<CommunitiyDto> }>> {
-    return axio2s.get(
-      `api/v1/admin/community?page=${page}&pageSize=${pageSize}`
-    );
+    const all = buildMockCommunities();
+    const communities = all.map((cu) => cu.community);
+    const start = (page - 1) * pageSize;
+    const pageItems = communities.slice(start, start + pageSize);
+    return Promise.resolve({
+      communities: pageItems,
+      args: { page, pageSize },
+      totalItemCount: communities.length,
+    });
+    // return axio2s.get(
+    //   `api/v1/admin/community?page=${page}&pageSize=${pageSize}`
+    // );
   },
 
   getCommunityAdmin(
@@ -826,16 +835,41 @@ export const communityApi = {
   ): Promise<
     PaginationResponse<{ communityCategories: Array<CommunitiyCategoryDto> }>
   > {
-    return await axio2s.get(
-      `api/v1/admin/community/category?page=${page}&pageSize=${pageSize}`,
-      {
-        params: {
-          page,
-          pageSize,
-          onlyParents,
-        },
-      }
-    );
+    // Mock: use existing category seed data (same as getAllCategoriesPublic)
+    const now = MOCK_TIME_BASE;
+    const baseCategories = buildMockCategoryPool(now);
+    const communities = buildMockCommunities();
+
+    const counts: Record<string, number> = {};
+    communities.forEach((c) => {
+      c.community.categoryIds.forEach((cid) => {
+        counts[cid] = (counts[cid] || 0) + 1;
+      });
+    });
+
+    let allCategories: CommunitiyCategoryDto[] = baseCategories.map((cat) => ({
+      ...cat,
+      communityCount: counts[cat.id] || 0,
+      subCategories: [],
+      subCategoriesCount: 0,
+    }));
+
+    if (onlyParents) {
+      allCategories = allCategories.filter((cat) => !cat.parentCategoryId);
+    }
+
+    const start = (page - 1) * pageSize;
+    const pageItems = allCategories.slice(start, start + pageSize);
+
+    return Promise.resolve({
+      communityCategories: pageItems,
+      args: { page, pageSize },
+      totalItemCount: allCategories.length,
+    });
+    // return await axio2s.get(
+    //   `api/v1/admin/community/category?page=${page}&pageSize=${pageSize}`,
+    //   { params: { page, pageSize, onlyParents } }
+    // );
   },
 
   async getAllCategoriesPublic(
@@ -1285,9 +1319,30 @@ export const communityApi = {
   }: PaginationParams<{ role?: UserRole }>): Promise<
     PaginationResponse<{ users: CommunityAdmin[] }>
   > {
-    return await axio2s.get(
-      `api/v1/admin/account/admin?page=${page}&pageSize=${pageSize}&role=${role}`
-    );
+    const mockAdmins: CommunityAdmin[] = [
+      { id: 'admin-1', email: 'admin@example.com', role: UserRole.Admin },
+      { id: 'admin-2', email: 'jordan.lee@example.com', role: UserRole.WorkSpaceOwner },
+      { id: 'admin-3', email: 'sam.chen@example.com', role: UserRole.Manager },
+      { id: 'admin-4', email: 'casey.martinez@example.com', role: UserRole.Manager },
+      { id: 'admin-5', email: 'morgan.taylor@example.com', role: UserRole.Admin },
+      { id: 'admin-6', email: 'riley.wilson@example.com', role: UserRole.Manager },
+      { id: 'admin-7', email: 'alex.kim@example.com', role: UserRole.WorkSpaceOwner },
+      { id: 'admin-8', email: 'jamie.nguyen@example.com', role: UserRole.Manager },
+    ];
+    const filtered =
+      role !== undefined
+        ? mockAdmins.filter((u) => u.role === role)
+        : mockAdmins;
+    const start = (page - 1) * pageSize;
+    const users = filtered.slice(start, start + pageSize);
+    return Promise.resolve({
+      users,
+      args: { page, pageSize },
+      totalItemCount: filtered.length,
+    });
+    // return await axio2s.get(
+    //   `api/v1/admin/account/admin?page=${page}&pageSize=${pageSize}&role=${role}`
+    // );
   },
 
   async createAdmin(email: string, role: UserRole) {

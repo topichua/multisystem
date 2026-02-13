@@ -21,9 +21,6 @@ export const AdminHeader = () => {
           style={{ flex: 1 }}
         >
           <Stack spacing="none" vertical>
-            <HeaderLogo
-              onClick={() => navigate(pagesMap.adminPageCommunitiesManagement)}
-            />
             <AdministratorView />
           </Stack>
 

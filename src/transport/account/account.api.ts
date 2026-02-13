@@ -116,7 +116,34 @@ export const accountAPI = {
   },
 
   async getUserGlobalPermission(): Promise<PermissionDto> {
-    return await axios.get(`/api/v1/permission`);
+    // Mock: full permissions so UI and role checks work in development
+    const permissions: PermissionDto = {
+      generalManagers: true,
+      generalCommunities: true,
+      generalCategories: true,
+      generalTags: true,
+      generalFaq: true,
+      generalAnnouncements: true,
+      generalTc: true,
+      communityCreate: true,
+      communityEdit: true,
+      communityClose: true,
+      communityAddModerator: true,
+      communityAddEditor: true,
+      communityAddMember: true,
+      communityBlacklist: true,
+      postCreate: true,
+      postApprove: true,
+      postEdit: true,
+      postDelete: true,
+      commentCreate: true,
+      commentEdit: true,
+      commentDelete: true,
+      meetingAll: true,
+      assetsAll: true,
+    };
+    return Promise.resolve(permissions);
+    // return await axios.get(`/api/v1/permission`);
   },
 
   // async getUserCommunitiesPermission() {
