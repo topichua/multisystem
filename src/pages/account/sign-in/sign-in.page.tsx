@@ -145,7 +145,7 @@ export const SignInPage = () => {
             </Button>
           </Form.Item>
           <Text type="secondary">Don't have an account? Go back to </Text>
-          <ExternalLink href="https://otaus.com.au/">otaus.com.au</ExternalLink>
+          <ExternalLink href="https://demo/">demo.com.au</ExternalLink>
         </S.Form>
       </Stack.Item>
     </Stack>

@@ -28,7 +28,7 @@ export const useTourSteps = () => {
               <S.CloseIcon onClick={() => setCurrentStep(currentStep + 1)} />
             </Stack>
             <Title style={{ fontSize: 18 }}>
-              Welcome to your OTA member portal!
+              Welcome to your member portal!
             </Title>
             <Title level={5} fontWeight={400}>
               Would you like a quick tour of your portal and its <br />{' '}

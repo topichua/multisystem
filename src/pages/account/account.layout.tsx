@@ -28,7 +28,7 @@ export const AccountLayout = () => {
       </div>
       {size.md && (
         <div className="img">
-          <img src={Back} alt="OTA Connect" />
+          <img src={Back} alt="Multisystem Connect" />
         </div>
       )}
     </S.AccountLayoutStyled>

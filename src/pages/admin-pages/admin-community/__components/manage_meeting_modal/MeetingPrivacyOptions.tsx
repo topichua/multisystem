@@ -18,7 +18,7 @@ const renderOptions: Record<string, RenderOptionProps> = {
   Public: {
     icon: <Globe01 width={16} height={20} />,
     text: 'Public',
-    description: 'All OTA members',
+    description: 'All Multisystem members',
   },
   Community: {
     icon: <Users01 width={16} height={20} />,

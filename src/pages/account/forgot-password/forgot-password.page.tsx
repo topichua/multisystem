@@ -80,7 +80,7 @@ export const ForgotPasswordPage = () => {
           distribution="center"
           style={{ marginBottom: 90 }}
         >
-          <ExternalLink href="https://otaus.com.au/">
+          <ExternalLink href="https://demo.au/">
             <HeaderLogoImg />
           </ExternalLink>
         </Stack>
@@ -93,7 +93,7 @@ export const ForgotPasswordPage = () => {
             type="secondary"
           >
             To reset your password, enter your email address <br /> you may use
-            for OTA Connect
+            for MultiSystem Connect
           </Text>
         </Stack>
       </Stack>
