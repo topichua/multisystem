@@ -1,12 +1,13 @@
 import { UploadAttachment } from 'src/components/common/UploadAttachments/UploadAttachments.tsx';
 import axiosBond from 'src/transport/axios/axios-bond-instance.ts';
 import axio2s from '../axios/axios-instance';
-import { Comment, Post, PostStatus } from '../posts/posts.dto';
+import { Comment, Post, PostStatus, Report } from '../posts/posts.dto';
 
 import { PaginationParams, PaginationResponse } from '../types';
 import {
   AllSegmentsResponse,
   Assets,
+  BlockedUser,
   BlockedUsersResponse,
   CommunitiesPreference,
   CommunitiyCategoryDto,
@@ -473,7 +474,7 @@ const buildMockCommunityMembers = (communityId: string) => {
         location: `Location ${((i - 1) % 10) + 1}`,
         jobTitle: i % 3 === 0 ? 'Pharmacist' : i % 3 === 1 ? 'Researcher' : 'Manager',
         homeState: states[i % states.length],
-        reason: i % 5 === 0 ? 'Security team member' : '',
+        reason: 'Security team member',
         isHaveAnswers: i % 4 === 0 ? true : null,
       };
     }
@@ -504,7 +505,17 @@ export const communityApi = {
   getCommunityAdmin(
     id: string
   ): Promise<PaginationResponse<{ communities: Array<CommunitiyDto> }>> {
-    return axio2s.get(`api/v1/admin/community?page=1&pageSize=1&id=${id}`);
+    const all = buildMockCommunities();
+    const found = all.find(
+      (cu) => cu.community.id === id || cu.community.alias === id
+    );
+    const communities = found ? [found.community] : [];
+    return Promise.resolve({
+      communities,
+      args: { page: 1, pageSize: 1 },
+      totalItemCount: communities.length,
+    });
+    // return axio2s.get(`api/v1/admin/community?page=1&pageSize=1&id=${id}`);
   },
 
   getCommunitiesList({
@@ -698,16 +709,27 @@ export const communityApi = {
   }: GetAdminCommunityPostsParams): Promise<
     PaginationResponse<{ posts: Post[] }>
   > {
-    return axio2s.get(
-      `api/v1/admin/community/${communityId}/post?page=${page}&pageSize=${pageSize}`,
-      {
-        params: {
-          status,
-          communityId,
-          id: postId,
-        },
-      }
-    );
+    let posts = buildMockPosts();
+    if (communityId) {
+      posts = posts.filter((p) => p.communityId === communityId);
+    }
+    if (postId) {
+      posts = posts.filter((p) => p.id === postId);
+    }
+    if (status !== undefined) {
+      posts = posts.filter((p) => p.status === status);
+    }
+    const start = (page - 1) * pageSize;
+    const paged = posts.slice(start, start + pageSize);
+    return Promise.resolve({
+      posts: paged,
+      args: { page, pageSize },
+      totalItemCount: posts.length,
+    });
+    // return axio2s.get(
+    //   `api/v1/admin/community/${communityId}/post?page=${page}&pageSize=${pageSize}`,
+    //   { params: { status, communityId, id: postId } }
+    // );
   },
 
   async createCommunity(community: CreateCommunityDto): Promise<null> {
@@ -963,33 +985,41 @@ export const communityApi = {
     id,
     page = 1,
     pageSize = 100,
-    ...rest
   }: GetCommunityMembersAdminsParams): Promise<
     PaginationResponse<{ communityMembers: CommunityMember[] }>
   > {
-    return await axio2s.post(`api/v1/admin/community/${id}/getlist`, {
-      page,
-      pageSize,
-      ...(rest || {}),
+    const allMembers = buildMockCommunityMembers(id);
+    const start = (page - 1) * pageSize;
+    const communityMembers = allMembers.slice(start, start + pageSize);
+    return Promise.resolve({
+      communityMembers,
+      args: { page, pageSize },
+      totalItemCount: allMembers.length,
     });
+    // return await axio2s.post(`api/v1/admin/community/${id}/getlist`, {
+    //   page, pageSize, ...(rest || {}),
+    // });
   },
 
   async getCommunityMembersAdminWithAnswers({
     id,
     page = 1,
     pageSize = 100,
-    ...rest
   }: GetCommunityMembersAdminsParams): Promise<
     PaginationResponse<{ communityMembers: CommunityMember[] }>
   > {
-    return await axio2s.post(
-      `api/v1/admin/community/${id}/getlist-with-answers`,
-      {
-        page,
-        pageSize,
-        ...(rest || {}),
-      }
-    );
+    const allMembers = buildMockCommunityMembers(id);
+    const start = (page - 1) * pageSize;
+    const communityMembers = allMembers.slice(start, start + pageSize);
+    return Promise.resolve({
+      communityMembers,
+      args: { page, pageSize },
+      totalItemCount: allMembers.length,
+    });
+    // return await axio2s.post(
+    //   `api/v1/admin/community/${id}/getlist-with-answers`,
+    //   { page, pageSize, ...(rest || {}) }
+    // );
   },
 
   async editMemberRoleOrStatus({
@@ -1166,9 +1196,24 @@ export const communityApi = {
   }: GetCommunityMeetingsParams): Promise<
     PaginationResponse<{ meets: CommunityMeeting[] }>
   > {
-    return await axio2s.get(
-      `api/v1/admin/community/${id}/meeting?page=${page}&pageSize=${pageSize}`
-    );
+    const allMeets = buildMockMeetings();
+    const toCommunityId = (meetingId: string) => {
+      const n = Number(meetingId.replace('mock-meet-', '')) || 1;
+      return `community-${((n - 1) % MOCK_COMMUNITIES_TOTAL) + 1}`;
+    };
+    const meets = allMeets
+      .filter((m) => toCommunityId(m.meet.id) === id)
+      .map((m) => m.meet);
+    const start = (page - 1) * pageSize;
+    const paged = meets.slice(start, start + pageSize);
+    return Promise.resolve({
+      meets: paged,
+      args: { page, pageSize },
+      totalItemCount: meets.length,
+    });
+    // return await axio2s.get(
+    //   `api/v1/admin/community/${id}/meeting?page=${page}&pageSize=${pageSize}`
+    // );
   },
 
   async removeMeetingAdmin(communityId: string, meetingId: string) {
@@ -1307,9 +1352,60 @@ export const communityApi = {
   }: PaginationParams<{ communityId: string }>): Promise<
     PaginationResponse<{ postComments: Comment[] }>
   > {
-    return await axio2s.get(
-      `api/v1/admin/community/${communityId}/comment/report?page=${page}&pageSize=${pageSize}`
-    );
+    const now = Date.now();
+    const postIdsForCommunity = buildMockPosts()
+      .filter((p) => p.communityId === communityId)
+      .slice(0, 5)
+      .map((p) => p.id);
+    const defaultPostId = postIdsForCommunity[0] ?? `mock-post-1`;
+    const mockReports: Report[] = [
+      {
+        id: 'report-1',
+        userId: 'user-reporter-1',
+        reason: 'Inappropriate or off-topic',
+        createdAt: new Date(now - 86400_000),
+      },
+      {
+        id: 'report-2',
+        userId: 'user-reporter-2',
+        reason: 'Spam or misleading',
+        createdAt: new Date(now - 43200_000),
+      },
+    ];
+    const mockComments: Comment[] = [
+      {
+        id: 'comment-reported-1',
+        body: 'Please review this comment for policy compliance.',
+        parentCommentId: null,
+        createdByUserId: 'user-2',
+        createdAt: new Date(now - 7200_000),
+        updatedAt: new Date(now - 3600_000),
+        postId: defaultPostId,
+        likesCount: 0,
+        reports: mockReports,
+      },
+      {
+        id: 'comment-reported-2',
+        body: 'Flagged for moderator review.',
+        parentCommentId: null,
+        createdByUserId: 'user-5',
+        createdAt: new Date(now - 14400_000),
+        updatedAt: new Date(now - 7200_000),
+        postId: postIdsForCommunity[1] ?? defaultPostId,
+        likesCount: 2,
+        reports: [mockReports[0]],
+      },
+    ];
+    const start = (page - 1) * pageSize;
+    const postComments = mockComments.slice(start, start + pageSize);
+    return Promise.resolve({
+      postComments,
+      args: { page, pageSize },
+      totalItemCount: mockComments.length,
+    });
+    // return await axio2s.get(
+    //   `api/v1/admin/community/${communityId}/comment/report?page=${page}&pageSize=${pageSize}`
+    // );
   },
 
   async getAdmins({
@@ -1362,9 +1458,26 @@ export const communityApi = {
   async getCommunityPostsStatistics(
     communityId: string
   ): Promise<GetCommunityPostsStatisticsResponse> {
-    return await axio2s.get(
-      `api/v1/admin/community/${communityId}/post/statistics`
-    );
+    const posts = buildMockPosts().filter((p) => p.communityId === communityId);
+    const allPostsCount = posts.length;
+    const pendingPostsCount = posts.filter(
+      (p) => p.status === PostStatus.WaitForApproval
+    ).length;
+    const archivedPostsCount = posts.filter(
+      (p) =>
+        p.status === PostStatus.Acrhived ||
+        p.status === PostStatus.ArchivedDueToReported
+    ).length;
+    return Promise.resolve({
+      allPostsCount,
+      pendingPostsCount: pendingPostsCount || 2,
+      reportedPostsCount: 1,
+      reportedPostCommentsCount: 2,
+      archivedPostsCount: archivedPostsCount || 0,
+    });
+    // return await axio2s.get(
+    //   `api/v1/admin/community/${communityId}/post/statistics`
+    // );
   },
 
   async addToFavorite(communityId: string) {
@@ -1435,9 +1548,53 @@ export const communityApi = {
     page?: number;
     pageSize?: number;
   }): Promise<BlockedUsersResponse> {
-    return axio2s.get(`api/v1/admin/community/${communityId}/block`, {
-      params: { page, pageSize },
+    const now = new Date().toISOString();
+    const mockBlocked: BlockedUser[] = [
+      {
+        id: `block-${communityId}-1`,
+        userId: 'user-blocked-1',
+        firstName: 'Jordan',
+        lastName: 'Reed',
+        email: 'jordan.reed@example.com',
+        title: 'Member',
+        communityId,
+        createdAt: now,
+        createdByUserId: 'user-1',
+      },
+      {
+        id: `block-${communityId}-2`,
+        userId: 'user-blocked-2',
+        firstName: 'Sam',
+        lastName: 'Kim',
+        pronoun: 'they/them',
+        email: 'sam.kim@example.com',
+        title: 'Member',
+        communityId,
+        createdAt: now,
+        createdByUserId: 'user-1',
+      },
+      {
+        id: `block-${communityId}-3`,
+        userId: 'user-blocked-3',
+        firstName: 'Casey',
+        lastName: 'Martinez',
+        email: 'casey.m@example.com',
+        title: 'Contributor',
+        communityId,
+        createdAt: now,
+        createdByUserId: 'user-2',
+      },
+    ];
+    const start = (page - 1) * pageSize;
+    const blacklistUsers = mockBlocked.slice(start, start + pageSize);
+    return Promise.resolve({
+      blacklistUsers,
+      args: { page, pageSize },
+      totalItemCount: mockBlocked.length,
     });
+    // return axio2s.get(`api/v1/admin/community/${communityId}/block`, {
+    //   params: { page, pageSize },
+    // });
   },
 
   blockUser({
